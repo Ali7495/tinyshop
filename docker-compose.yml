@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: tinyShopPostgres
+    environment:
+      POSTGRES_USER: tiny
+      POSTGRES_PASSWORD: tiny
+      POSTGRES_DB: identityDb
+    ports: ["5432:5432"]
+    volumes: [pgdata:/var/lib/postgresql/data]
+
+  rabbitmq:
+    image: rabbitmq:3-management  
+    container_name: tinyShopRabbitMq
+    ports: ["5672:5672","15672:15672"]
+
+  redis:
+    image: redis:latest
+    ports: ["6379:6379"]    
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: tinyShopPgAdmin
+    ports: ["5051:80"]
+    environment:
+      PGADMIN_DEFAULT_EMAIL: tinyshop@email.com
+      PGADMIN_DEFAULT_PASSWORD: tinyshop
+    volumes: [pgadmin_data:/var/lib/pgadmin]
+    depends_on:
+      - postgres
+
+
+volumes:
+  pgdata:      
+  pgadmin_data:
