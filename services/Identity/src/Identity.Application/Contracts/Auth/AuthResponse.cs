@@ -1,0 +1,1 @@
+public sealed record AuthResponse(string accessToken, string refreshToken, DateTime expiresAt);
