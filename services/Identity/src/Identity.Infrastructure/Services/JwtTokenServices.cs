@@ -31,6 +31,19 @@ public sealed class JwtTokenServices : ITokenServices
 
     public string GenerateAccessToken(Guid userId, string email, IEnumerable<string> roles)
     {
-        throw new NotImplementedException();
+        IEnumerable<Claim> claims = BuildClaims(userId, email, roles);
+
+        SigningCredentials credentials = new(new SymmetricSecurityKey(_keyBytes), SecurityAlgorithms.HmacSha256);
+
+        JwtSecurityToken token = new(
+            issuer: _jwtOptions.Issuer,
+            audience: _jwtOptions.Audience,
+            claims : claims,
+            notBefore: DateTime.Now,
+            expires: DateTime.Now.AddMinutes(_jwtOptions.AccessTokenExpiryMinutes),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
