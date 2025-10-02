@@ -42,7 +42,7 @@ public sealed class AuthServices : IAuthServices
         return await IssueTokens(user);
     }
 
-    public async Task<AuthResponse> RegisterAsync(RegisterRequest registerRequest, List<string> roles)
+    public async Task<AuthResponse> RegisterAsync(RegisterRequest registerRequest)
     {
         Email email = Email.Create(registerRequest.email);
         User? existingUser = await _userRepository.GetByEmailAsync(registerRequest.email);
@@ -52,7 +52,7 @@ public sealed class AuthServices : IAuthServices
 
         PasswordHash passwordHash = PasswordHash.FromHashed(_passwordHasher.HashPassword(null!, registerRequest.password));
 
-        User user = User.Register(email, passwordHash, roles);
+        User user = User.Register(email, passwordHash, registerRequest.roles);
 
         await _userRepository.AddAsync(user);
 

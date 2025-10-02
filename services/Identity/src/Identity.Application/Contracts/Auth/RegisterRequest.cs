@@ -1,1 +1,1 @@
-public sealed record RegisterRequest(string email, string password);
+public sealed record RegisterRequest(string email, string password, List<string> roles);

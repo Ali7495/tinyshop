@@ -1,13 +1,25 @@
 
+using System.Data;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("Jwt"));
 
-DependencyInjection.RegisterServices(builder.Services);
+builder.Services.AddScoped<ITokenServices, JwtTokenServices>();
+
+// Register database connection factory
+builder.Services.AddScoped<IDbConnection>(sp =>
+{
+    var connString = builder.Configuration.GetConnectionString("IdentityDb");
+    return new NpgsqlConnection(connString);
+});
+
+// Register repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 JwtOptions jwtOptions = builder.Configuration.GetSection("Jwt").Get<JwtOptions>()!;
 byte[] keyBytes = Encoding.UTF8.GetBytes(jwtOptions.Key);
